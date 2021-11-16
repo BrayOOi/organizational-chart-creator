@@ -5,8 +5,16 @@ import ShareIcon from '@mui/icons-material/Share';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import NodeCard from '../../../presentation/NodeCard/NodeCard';
+import { NodeT } from '../Node/types';
+import { findNode, flattenTree } from '../Node/utils';
 
-const Sidebar: React.FC<{}> = () => {
+interface SidebarProps {
+  state: NodeT;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({
+  state
+}) => {
 
   return (
     <Grid item container direction="column" style={{
@@ -34,8 +42,8 @@ const Sidebar: React.FC<{}> = () => {
 
       <Divider />
 
-      <Grid item container style={{ overflowY: 'scroll', height: '80%', gap: 10 }}>
-        {Array(1).fill('').map(() => <NodeCard />)}
+      <Grid item container style={{ overflowY: 'scroll', height: '88%', gap: 10 }}>
+        {flattenTree(state).map(node => <NodeCard node={node} />)}
       </Grid>
     </Grid>
   );

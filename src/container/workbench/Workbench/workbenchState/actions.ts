@@ -1,5 +1,6 @@
-const addNode = () => ({
-  type: 'click/add_node' as const,
+const addNode = (id: string) => ({
+  type: 'click/add_child' as const,
+  payload: id
 });
 
 export type ChartActionType = ReturnType<

@@ -4,12 +4,14 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
-interface NodeCardProps {
+import { NodeT } from '../../container/workbench/Node/types';
 
+interface NodeCardProps {
+  node: NodeT
 }
 
 const NodeCard: React.FC<NodeCardProps> = ({
-
+  node
 }) => (
   <Card variant="outlined" style={{ width: '100%', height: 'fit-content', gap: 10 }}>
     <CardContent>
@@ -20,7 +22,7 @@ const NodeCard: React.FC<NodeCardProps> = ({
             variant="outlined"
             margin="dense"
             fullWidth
-            value={""}
+            value={node.title}
             onChange={e => {}}
           />
         </Grid>
