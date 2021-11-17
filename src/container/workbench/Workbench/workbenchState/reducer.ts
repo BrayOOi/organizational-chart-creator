@@ -20,7 +20,7 @@ export const INITIAL_NODE = (
   id: uuidv4(),
   title,
   backgroundColor: '#ffffff',
-  fontColor: '#000',
+  fontColor: '#000000',
   width: 300,
   height: 150,
   fontSize: 16,
@@ -77,12 +77,15 @@ export const chartReducer = (
       return produce(state, draft => {
         let targetNode = findNode(draft.payload, action.payload.id);
 
-        if (targetNode && KEY_MAP[action.type]) {
-          // @ts-ignore
-          targetNode[KEY_MAP[action.type]] = action.payload[KEY_MAP[action.type]];
-        }
+        assignPayload(KEY_MAP[action.type], action.payload.payload, targetNode);
       });
     default:
       return state;
   }
 };
+
+function assignPayload<K extends keyof NodeT>(key: K | undefined, value: NodeT[K], node: NodeT | undefined) {
+  if (node && key) {
+    node[key] = value;
+  }
+}
