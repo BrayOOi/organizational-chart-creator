@@ -7,9 +7,12 @@ const Node: React.FC<{ node: NodeT }> = ({ node }) => {
     <>
       <div
         style={{
-          backgroundColor: node.color,
+          backgroundColor: node.backgroundColor,
+          color: node.fontColor,
           width: node.width,
           height: node.height,
+          fontSize: node.fontSize,
+
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center'
@@ -17,7 +20,7 @@ const Node: React.FC<{ node: NodeT }> = ({ node }) => {
       >
         {node.title}
       </div>
-      {node.children.map(child => <Node node={child} />)}
+      {node.children.map(child => <Node key={child.id} node={child} />)}
     </>
   );
 };
