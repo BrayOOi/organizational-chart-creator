@@ -10,10 +10,30 @@ import { findNode, flattenTree } from '../Node/utils';
 
 interface SidebarProps {
   state: NodeT;
+  onAddChild: (id: string) => void;
+  onCopy: (id: string) => void;
+  onDelete: (id: string) => void;
+
+  onTitleChange: (id: string) => (title: string) => void;
+  onBackgroundColorChange: (id: string) => (color: string) => void;
+  onFontColorChange: (id: string) => (color: string) => void;
+  onWidthChange: (id: string) => (size: number) => void;
+  onHeightChange: (id: string) => (size: number) => void;
+  onFontSizeChange: (id: string) => (size: number) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-  state
+  state,
+  onAddChild,
+  onCopy,
+  onDelete,
+
+  onTitleChange,
+  onBackgroundColorChange,
+  onFontColorChange,
+  onWidthChange,
+  onHeightChange,
+  onFontSizeChange,
 }) => {
 
   return (
@@ -43,7 +63,27 @@ const Sidebar: React.FC<SidebarProps> = ({
       <Divider />
 
       <Grid item container style={{ overflowY: 'scroll', height: '88%', gap: 10 }}>
-        {flattenTree(state).map(node => <NodeCard node={node} />)}
+        {flattenTree(state).map(node => (
+          <NodeCard
+            key={node.id}
+            title={node.title}
+            backgroundColor={node.backgroundColor}
+            fontColor={node.fontColor}
+            width={node.width}
+            height={node.height}
+            fontSize={node.fontSize}
+
+            onTitleChange={onTitleChange(node.id)}
+            onBackgroundColorChange={onBackgroundColorChange(node.id)}
+            onFontColorChange={onFontColorChange(node.id)}
+            onWidthChange={onWidthChange(node.id)}
+            onHeightChange={onHeightChange(node.id)}
+            onFontSizeChange={onFontSizeChange(node.id)}
+
+            onAddChild={() => onAddChild(node.id)}
+            onCopy={() => onCopy(node.id)}
+            onDelete={() => onDelete(node.id)}
+          />))}
       </Grid>
     </Grid>
   );
