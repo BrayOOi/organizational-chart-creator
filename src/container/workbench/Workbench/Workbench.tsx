@@ -14,10 +14,29 @@ const Workbench: React.FC<{}> = () => {
   const localDispatchAction = localDispatchDecorator(localDispatch);
 
   return (
-    <Grid container style={{ height: '100vh', backgroundColor: 'grey' }}>
-      <Grid item flexGrow={2}>
-        <Node node={chartState.payload} />
-      </Grid>
+    <>
+      <div
+        style={{
+          height: '100vh',
+          width: '100vw',
+          transform: 'translate(50%, 50%)',
+        }}>
+        <div style={{
+          position: 'absolute',
+          top: -90,
+          left: -150-(320/2),
+        }}>
+          <Node node={chartState.payload} />
+        </div>
+      </div>
+      <div
+        style={{
+          height: '100vh',
+          position: 'fixed',
+          right: 0,
+          top: 0
+        }}
+      >
       <Sidebar
         state={chartState.payload}
         onAddChild={localDispatchAction(chartActions.addNode)}
@@ -31,7 +50,8 @@ const Workbench: React.FC<{}> = () => {
         onHeightChange={id => payload => localDispatch(chartActions.editHeight(id, payload))}
         onFontSizeChange={id => payload => localDispatch(chartActions.pickFontSize(id, payload))}
       />
-    </Grid>
+      </div>
+    </>
   );
 };
 
