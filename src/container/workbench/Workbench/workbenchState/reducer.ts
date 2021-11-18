@@ -43,7 +43,11 @@ export const chartReducer = (
     // chart operations
     case 'click/add_child':
       return produce(state, draft => {
-        draft.payload.children.push(INITIAL_NODE());
+        let targetNode = findNode(draft.payload, action.payload);
+
+        if (targetNode) {
+          targetNode.children.push(INITIAL_NODE(`Child ${targetNode.children.length + 1}`));
+        }
       });
     case 'click/add_sibling':
       return produce(state, draft => {
