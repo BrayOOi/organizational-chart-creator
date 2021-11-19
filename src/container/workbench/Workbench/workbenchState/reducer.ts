@@ -14,9 +14,11 @@ const KEY_MAP: Partial<Record<ChartActionType["type"], keyof NodeT>> = {
   'pick/change_font_size': 'fontSize',
 };
 
-export const INITIAL_NODE = (
+export const INITIAL_NODE = ({
   title = '',
-) => ({
+  x = 0,
+  y = 0,
+}): NodeT => ({
   id: uuidv4(),
   title,
   backgroundColor: '#ffffff',
@@ -24,15 +26,22 @@ export const INITIAL_NODE = (
   width: 300,
   height: 150,
   fontSize: 16,
-  coords: true,
+  x,
+  y,
   children: [],
+});
+
+const GENESIS_NODE = INITIAL_NODE({
+  title: 'You are here!',
+  x: 0,
+  y: 0
 });
 
 export const INITIAL_CHART_STATE: stateT<NodeT> = {
   state: {
     selectedNode: GENESIS_NODE,
   },
-  payload: INITIAL_NODE('You are here!'),
+  payload: GENESIS_NODE,
   validation: {
 
   }
@@ -49,7 +58,10 @@ export const chartReducer = (
         let targetNode = findNode(draft.payload, action.payload);
 
         if (targetNode) {
-          targetNode.children.push(INITIAL_NODE(`Child ${targetNode.children.length + 1}`));
+          targetNode.children.push(INITIAL_NODE({
+            title: `Child ${targetNode.children.length + 1}`,
+            y: targetNode.y + targetNode.height + 100,
+          }));
         }
       });
     case 'click/add_sibling':
@@ -58,7 +70,33 @@ export const chartReducer = (
         let targetNode = parentNode?.children.find(child => child.id === action.payload);
         
         if (parentNode && targetNode) {
-          parentNode.children.push(targetNode);
+          // calculate total width
+          const padding = 50;
+
+          let unadjustedNextXs: Array<number> = [];
+
+          parentNode.children.push(INITIAL_NODE({
+            title: `Sibling ${targetNode.children.length + 1}`,
+            y: parentNode.y + parentNode.height + 100,
+          }));
+
+          const totalWidth = parentNode.children.reduce((accumWidth, node, index) => {
+            const isFirstChild = !index;
+
+            const unadjustedNextX = accumWidth 
+              + (isFirstChild ? 0 : node.width)
+              + (isFirstChild ? 0 : padding);
+
+            unadjustedNextXs.push(unadjustedNextX);
+
+            return unadjustedNextX;
+          }, parentNode.x);
+
+          const midPoint = totalWidth / 2;
+
+          parentNode.children.forEach((child, index) => {
+            child.x = unadjustedNextXs[index] - midPoint;
+          });
         }
       });
     case 'click/delete_node':

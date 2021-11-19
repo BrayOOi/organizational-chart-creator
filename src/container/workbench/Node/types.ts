@@ -6,6 +6,7 @@ export type NodeT = {
   width: number;
   height: number;
   fontSize: number;
-  coords: any;
+  x: number;
+  y: number;
   children: Array<NodeT>;
 }

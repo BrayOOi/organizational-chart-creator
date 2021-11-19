@@ -28,7 +28,11 @@ const Node: React.FC<NodeProps> = ({
 
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+
+          position: 'absolute',
+          top: -node.height/2 + node.y,
+          left: -node.width/2 - (320/2) + node.x
         }}
         onClick={() => onClick(node)}
       >
