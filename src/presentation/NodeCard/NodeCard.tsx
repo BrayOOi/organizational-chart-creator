@@ -14,6 +14,8 @@ interface NodeCardProps {
   height: NodeT["height"];
   fontSize: NodeT["fontSize"];
 
+  isSelected: boolean;
+
   onTitleChange: (title: string) => void;
   onBackgroundColorChange: (color: string) => void;
   onFontColorChange: (color: string) => void;
@@ -34,6 +36,8 @@ const NodeCard: React.FC<NodeCardProps> = ({
   height,
   fontSize,
 
+  isSelected,
+
   onTitleChange,
   onBackgroundColorChange,
   onFontColorChange,
@@ -45,7 +49,12 @@ const NodeCard: React.FC<NodeCardProps> = ({
   onDelete,
   onCopy
 }) => (
-  <Card variant="outlined" style={{ width: '100%', height: 'fit-content', gap: 10 }}>
+  <Card variant="outlined" style={{
+    width: '100%',
+    height: 'fit-content',
+    gap: 10,
+    border: isSelected ? '1px solid black' : undefined,
+  }}>
     <CardContent>
       <Grid container direction="column" style={{ gap: 20 }}>
         <Grid item>

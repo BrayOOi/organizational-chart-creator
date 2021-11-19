@@ -10,6 +10,7 @@ import { findNode, flattenTree } from '../Node/utils';
 
 interface SidebarProps {
   state: NodeT;
+  selectedNode: NodeT;
   onAddChild: (id: string) => void;
   onCopy: (id: string) => void;
   onDelete: (id: string) => void;
@@ -24,6 +25,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({
   state,
+  selectedNode,
   onAddChild,
   onCopy,
   onDelete,
@@ -72,6 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             width={node.width}
             height={node.height}
             fontSize={node.fontSize}
+
+            isSelected={node.id === selectedNode.id}
 
             onTitleChange={onTitleChange(node.id)}
             onBackgroundColorChange={onBackgroundColorChange(node.id)}

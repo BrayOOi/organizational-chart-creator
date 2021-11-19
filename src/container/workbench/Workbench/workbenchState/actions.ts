@@ -17,6 +17,11 @@ const deleteNode = (id: string) => ({
 });
 
 // node operations
+const selectNode = (node: NodeT) => ({
+  type: 'click/select_node' as const,
+  payload: node
+});
+
 const changeTitle = (id: string, title: string) => ({
   type: 'type/change_title' as const,
   payload: {
@@ -70,6 +75,7 @@ const chartActions = {
   addSibling,
   deleteNode,
 
+  selectNode,
   changeTitle,
   pickBackgroundColor,
   pickFontColor,

@@ -29,6 +29,9 @@ export const INITIAL_NODE = (
 });
 
 export const INITIAL_CHART_STATE: stateT<NodeT> = {
+  state: {
+    selectedNode: GENESIS_NODE,
+  },
   payload: INITIAL_NODE('You are here!'),
   validation: {
 
@@ -72,6 +75,10 @@ export const chartReducer = (
       });
 
     // node operations
+    case 'click/select_node':
+      return produce(state, draft => {
+        draft.state.selectedNode = action.payload;
+      });
     case 'type/change_title':
     case 'pick/change_background_color':
     case 'pick/change_font_color':

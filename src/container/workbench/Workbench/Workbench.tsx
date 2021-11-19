@@ -21,13 +21,11 @@ const Workbench: React.FC<{}> = () => {
           width: '100vw',
           transform: 'translate(50%, 50%)',
         }}>
-        <div style={{
-          position: 'absolute',
-          top: -90,
-          left: -150-(320/2),
-        }}>
-          <Node node={chartState.payload} />
-        </div>
+        <Node
+          node={chartState.payload}
+          onClick={localDispatchAction(chartActions.selectNode)}
+          selectedNode={chartState.state.selectedNode}
+        />
       </div>
       <div
         style={{
@@ -39,6 +37,7 @@ const Workbench: React.FC<{}> = () => {
       >
       <Sidebar
         state={chartState.payload}
+        selectedNode={chartState.state.selectedNode}
         onAddChild={localDispatchAction(chartActions.addNode)}
         onCopy={localDispatchAction(chartActions.addSibling)}
         onDelete={localDispatchAction(chartActions.deleteNode)}
