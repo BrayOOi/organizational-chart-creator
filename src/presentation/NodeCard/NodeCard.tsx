@@ -143,14 +143,14 @@ const NodeCard: React.FC<NodeCardProps> = ({
 
     <CardActions style={{ padding: 12 }}>
       <Grid container justifyContent="flex-end" gap={1}>
-        <Fab color="primary" size="small" aria-label="add">
-          <AddIcon fontSize="small" onClick={onAddChild} />
+        <Fab color="primary" size="small" aria-label="add" onClick={onAddChild}>
+          <AddIcon fontSize="small" />
         </Fab>
-        <Fab color="primary" size="small" aria-label="copy">
-          <ContentCopyIcon fontSize="small" onClick={onCopy} />
+        <Fab color="primary" size="small" aria-label="copy" onClick={onCopy}>
+          <ContentCopyIcon fontSize="small" />
         </Fab>
-        <Fab color="primary" size="small" aria-label="delete">
-          <DeleteIcon fontSize="small" onClick={onDelete} />
+        <Fab color="primary" size="small" aria-label="delete" onClick={onDelete}>
+          <DeleteIcon fontSize="small" />
         </Fab>
       </Grid>
     </CardActions>
