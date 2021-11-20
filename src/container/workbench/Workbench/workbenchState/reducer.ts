@@ -14,6 +14,8 @@ const KEY_MAP: Partial<Record<ChartActionType["type"], keyof NodeT>> = {
   'pick/change_font_size': 'fontSize',
 };
 
+const PADDING = 50;
+
 export const INITIAL_NODE = ({
   title = '',
   x = 0,
@@ -62,6 +64,8 @@ export const chartReducer = (
             title: `Child ${targetNode.children.length + 1}`,
             y: targetNode.y + targetNode.height + 100,
           }));
+
+          updateChildrenPositions(targetNode);
         }
       });
     case 'click/add_sibling':
@@ -70,34 +74,14 @@ export const chartReducer = (
         let targetNode = parentNode?.children.find(child => child.id === action.payload);
         
         if (parentNode && targetNode) {
-          // calculate total width
-          const padding = 50;
-
-          let unadjustedNextXs: Array<number> = [];
-
           parentNode.children.push(INITIAL_NODE({
             title: `Sibling ${targetNode.children.length + 1}`,
             y: parentNode.y + parentNode.height + 100,
           }));
 
-          const totalWidth = parentNode.children.reduce((accumWidth, node, index) => {
-            const isFirstChild = !index;
-
-            const unadjustedNextX = accumWidth 
-              + (isFirstChild ? 0 : node.width)
-              + (isFirstChild ? 0 : padding);
-
-            unadjustedNextXs.push(unadjustedNextX);
-
-            return unadjustedNextX;
-          }, parentNode.x);
-
-          const midPoint = totalWidth / 2;
-
-          parentNode.children.forEach((child, index) => {
-            child.x = unadjustedNextXs[index] - midPoint;
-          });
         }
+
+        updateChildrenPositions(draft.payload);
       });
     case 'click/delete_node':
       return produce(state, draft => {
@@ -108,6 +92,8 @@ export const chartReducer = (
 
           if (targetNodeIndex >= 0) {
             parentNode.children.splice(targetNodeIndex, 1);
+
+            updateChildrenPositions(parentNode);
           }
         }
       });
@@ -137,4 +123,27 @@ function assignPayload<K extends keyof NodeT>(key: K | undefined, value: NodeT[K
   if (node && key) {
     node[key] = value;
   }
+}
+
+function updateChildrenPositions(parentNode: NodeT) {
+  // calculate total width
+  let unadjustedNextXs: Array<number> = [];
+
+  const totalWidth = parentNode.children.reduce((accumWidth, node, index) => {
+    const isFirstChild = !index;
+
+    const unadjustedNextX = accumWidth 
+      + (isFirstChild ? 0 : node.width)
+      + (isFirstChild ? 0 : PADDING);
+
+    unadjustedNextXs.push(unadjustedNextX);
+
+    return unadjustedNextX;
+  }, parentNode.x);
+
+  const midPoint = totalWidth / 2;
+
+  parentNode.children.forEach((child, index) => {
+    child.x = unadjustedNextXs[index] - midPoint;
+  });
 }
