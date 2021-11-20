@@ -60,10 +60,13 @@ export const chartReducer = (
         let targetNode = findNode(draft.payload, action.payload);
 
         if (targetNode) {
-          targetNode.children.push(INITIAL_NODE({
+          const newChild = INITIAL_NODE({
             title: `Child ${targetNode.children.length + 1}`,
             y: targetNode.y + targetNode.height + 100,
-          }));
+          })
+          targetNode.children.push(newChild);
+
+          draft.state.selectedNodeID = newChild.id;
 
           updateChildrenPositions(targetNode);
         }
@@ -74,14 +77,17 @@ export const chartReducer = (
         let targetNode = parentNode?.children.find(child => child.id === action.payload);
         
         if (parentNode && targetNode) {
-          parentNode.children.push(INITIAL_NODE({
-            title: `Sibling ${targetNode.children.length + 1}`,
+          const newChild = INITIAL_NODE({
+            title: `Node ${targetNode.children.length + 1}`,
             y: parentNode.y + parentNode.height + 100,
-          }));
+          });
 
+          parentNode.children.push(newChild);
+
+          draft.state.selectedNodeID = newChild.id;
+          
+          updateChildrenPositions(draft.payload);
         }
-
-        updateChildrenPositions(draft.payload);
       });
     case 'click/delete_node':
       return produce(state, draft => {
@@ -93,6 +99,8 @@ export const chartReducer = (
           if (targetNodeIndex >= 0) {
             parentNode.children.splice(targetNodeIndex, 1);
 
+            draft.state.selectedNodeID = parentNode.id;
+
             updateChildrenPositions(parentNode);
           }
         }
@@ -101,7 +109,7 @@ export const chartReducer = (
     // node operations
     case 'click/select_node':
       return produce(state, draft => {
-        draft.state.selectedNode = action.payload;
+        draft.state.selectedNodeID = action.payload.id;
       });
     case 'type/change_title':
     case 'pick/change_background_color':
@@ -110,7 +118,7 @@ export const chartReducer = (
     case 'pick/change_height':
     case 'pick/change_font_size':
       return produce(state, draft => {
-        let targetNode = findNode(draft.payload, action.payload.id);
+        let targetNode = updateSelectedNode(draft, action.payload.id);
 
         assignPayload(KEY_MAP[action.type], action.payload.payload, targetNode);
       });
@@ -126,9 +134,9 @@ function assignPayload<K extends keyof NodeT>(key: K | undefined, value: NodeT[K
 }
 
 function updateChildrenPositions(parentNode: NodeT) {
-  // calculate total width
   let unadjustedNextXs: Array<number> = [];
 
+  // calculate total width
   const totalWidth = parentNode.children.reduce((accumWidth, node, index) => {
     const isFirstChild = !index;
 
@@ -146,4 +154,17 @@ function updateChildrenPositions(parentNode: NodeT) {
   parentNode.children.forEach((child, index) => {
     child.x = unadjustedNextXs[index] - midPoint;
   });
+}
+
+function updateSelectedNode(state: typeof INITIAL_CHART_STATE, nextSelectedNodeID: string): NodeT | undefined {
+  const targetNode = findNode(state.payload, nextSelectedNodeID);
+
+  if (state.state.selectedNodeID !== nextSelectedNodeID) {
+
+    if (targetNode) {
+      state.state.selectedNodeID = nextSelectedNodeID;
+    }
+  }
+
+  return targetNode;
 }
