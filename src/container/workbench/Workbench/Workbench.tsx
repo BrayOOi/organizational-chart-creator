@@ -24,7 +24,7 @@ const Workbench: React.FC<{}> = () => {
         <Node
           node={chartState.payload}
           onClick={localDispatchAction(chartActions.selectNode)}
-          selectedNode={chartState.state.selectedNode}
+          selectedNodeID={chartState.state.selectedNodeID}
         />
       </div>
       <div
@@ -37,7 +37,7 @@ const Workbench: React.FC<{}> = () => {
       >
       <Sidebar
         state={chartState.payload}
-        selectedNode={chartState.state.selectedNode}
+        selectedNodeID={chartState.state.selectedNodeID}
         onAddChild={localDispatchAction(chartActions.addNode)}
         onCopy={localDispatchAction(chartActions.addSibling)}
         onDelete={localDispatchAction(chartActions.deleteNode)}

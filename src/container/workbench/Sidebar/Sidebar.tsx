@@ -6,11 +6,11 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import NodeCard from '../../../presentation/NodeCard/NodeCard';
 import { NodeT } from '../Node/types';
-import { findNode, flattenTree } from '../Node/utils';
+import { flattenTree } from '../Node/utils';
 
 interface SidebarProps {
   state: NodeT;
-  selectedNode: NodeT;
+  selectedNodeID: string;
   onAddChild: (id: string) => void;
   onCopy: (id: string) => void;
   onDelete: (id: string) => void;
@@ -25,7 +25,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({
   state,
-  selectedNode,
+  selectedNodeID,
   onAddChild,
   onCopy,
   onDelete,
@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             height={node.height}
             fontSize={node.fontSize}
 
-            isSelected={node.id === selectedNode.id}
+            isSelected={node.id === selectedNodeID}
 
             onTitleChange={onTitleChange(node.id)}
             onBackgroundColorChange={onBackgroundColorChange(node.id)}

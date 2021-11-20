@@ -5,15 +5,15 @@ import { NodeT } from './types';
 interface NodeProps {
   node: NodeT;
   onClick: (node: NodeT) => void;
-  selectedNode: NodeT;
+  selectedNodeID: string;
 }
 
 const Node: React.FC<NodeProps> = ({
   node,
   onClick,
-  selectedNode,
+  selectedNodeID,
 }) => {
-  const isSelected = node.id === selectedNode.id;
+  const isSelected = node.id === selectedNodeID;
 
   return (
     <>
@@ -43,7 +43,7 @@ const Node: React.FC<NodeProps> = ({
           key={child.id}
           node={child}
           onClick={onClick}
-          selectedNode={selectedNode}
+          selectedNodeID={selectedNodeID}
         />))}
     </>
   );

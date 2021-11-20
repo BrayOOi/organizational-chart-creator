@@ -41,7 +41,7 @@ const GENESIS_NODE = INITIAL_NODE({
 
 export const INITIAL_CHART_STATE: stateT<NodeT> = {
   state: {
-    selectedNode: GENESIS_NODE,
+    selectedNodeID: GENESIS_NODE.id,
   },
   payload: GENESIS_NODE,
   validation: {
