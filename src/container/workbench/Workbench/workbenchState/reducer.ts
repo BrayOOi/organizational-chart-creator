@@ -39,7 +39,7 @@ const GENESIS_NODE = INITIAL_NODE({
   y: 0
 });
 
-export const INITIAL_CHART_STATE: stateT<NodeT> = {
+export const INITIAL_CHART_STATE: stateT<{ selectedNodeID: string }, NodeT> = {
   state: {
     selectedNodeID: GENESIS_NODE.id,
   },
