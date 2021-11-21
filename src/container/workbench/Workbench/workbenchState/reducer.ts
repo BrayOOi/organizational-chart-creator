@@ -158,10 +158,14 @@ function updateChildrenPositions(parentNode: NodeT) {
 
   // adjust all x1s so that the children are centered from parent
   const midPoint = totalWidth / 2;
-  const parentMidPoint = (parentNode.x + parentNode.width) / 2;
+  const parentMidPoint = parentNode.x + (parentNode.width / 2);
 
   parentNode.children.forEach((child, index) => {
     child.x = parentMidPoint - midPoint + unadjustedNextXs[index];
+
+    if (child.children.length) {
+      updateChildrenPositions(child);
+    }
   });
 }
 
