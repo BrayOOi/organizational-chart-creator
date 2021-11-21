@@ -111,10 +111,20 @@ export const chartReducer = (
       return produce(state, draft => {
         draft.state.selectedNodeID = action.payload.id;
       });
+    case 'pick/change_width':
+      return produce(state, draft => {
+        let targetNode = updateSelectedNode(draft, action.payload.id);
+        const parentNode = findNodeParent(draft.payload, action.payload.id);
+
+        assignPayload(KEY_MAP[action.type], action.payload.payload, targetNode);
+
+        if (parentNode) {
+          updateChildrenPositions(parentNode);
+        }
+      });
     case 'type/change_title':
     case 'pick/change_background_color':
     case 'pick/change_font_color':
-    case 'pick/change_width':
     case 'pick/change_height':
     case 'pick/change_font_size':
       return produce(state, draft => {
@@ -135,24 +145,23 @@ function assignPayload<K extends keyof NodeT>(key: K | undefined, value: NodeT[K
 
 function updateChildrenPositions(parentNode: NodeT) {
   let unadjustedNextXs: Array<number> = [];
+  const childrenLength = parentNode.children.length;
 
-  // calculate total width
+  // record new unadjusted x1's of children
+  // unadjusted X's are relative x positions to 1st child 0
   const totalWidth = parentNode.children.reduce((accumWidth, node, index) => {
-    const isFirstChild = !index;
+    // the last accumWidth also serves as the unadjusted x1 of current node
+    unadjustedNextXs.push(accumWidth);
 
-    const unadjustedNextX = accumWidth 
-      + (isFirstChild ? 0 : node.width)
-      + (isFirstChild ? 0 : PADDING);
+    return accumWidth + node.width + (index === childrenLength -1 ? 0 : PADDING);
+  }, 0);
 
-    unadjustedNextXs.push(unadjustedNextX);
-
-    return unadjustedNextX;
-  }, parentNode.x);
-
+  // adjust all x1s so that the children are centered from parent
   const midPoint = totalWidth / 2;
+  const parentMidPoint = (parentNode.x + parentNode.width) / 2;
 
   parentNode.children.forEach((child, index) => {
-    child.x = unadjustedNextXs[index] - midPoint;
+    child.x = parentMidPoint - midPoint + unadjustedNextXs[index];
   });
 }
 
