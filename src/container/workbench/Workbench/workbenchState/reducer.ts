@@ -68,7 +68,7 @@ export const chartReducer = (
 
           draft.state.selectedNodeID = newChild.id;
 
-          updateChildrenPositions(targetNode);
+          updateChildrenPositions(draft.payload);
         }
       });
     case 'click/add_sibling':
@@ -114,13 +114,10 @@ export const chartReducer = (
     case 'pick/change_width':
       return produce(state, draft => {
         let targetNode = updateSelectedNode(draft, action.payload.id);
-        const parentNode = findNodeParent(draft.payload, action.payload.id);
 
         assignPayload(KEY_MAP[action.type], action.payload.payload, targetNode);
 
-        if (parentNode) {
-          updateChildrenPositions(parentNode);
-        }
+        updateChildrenPositions(draft.payload);
       });
     case 'type/change_title':
     case 'pick/change_background_color':
@@ -144,29 +141,39 @@ function assignPayload<K extends keyof NodeT>(key: K | undefined, value: NodeT[K
 }
 
 function updateChildrenPositions(parentNode: NodeT) {
-  let unadjustedNextXs: Array<number> = [];
-  const childrenLength = parentNode.children.length;
-
-  // record new unadjusted x1's of children
-  // unadjusted X's are relative x positions to 1st child 0
-  const totalWidth = parentNode.children.reduce((accumWidth, node, index) => {
-    // the last accumWidth also serves as the unadjusted x1 of current node
-    unadjustedNextXs.push(accumWidth);
-
-    return accumWidth + node.width + (index === childrenLength -1 ? 0 : PADDING);
-  }, 0);
+  const totalWidth = getEffectiveWidth(parentNode);
 
   // adjust all x1s so that the children are centered from parent
   const midPoint = totalWidth / 2;
   const parentMidPoint = parentNode.x + (parentNode.width / 2);
 
+  let accumWidth = 0;
+
   parentNode.children.forEach((child, index) => {
-    child.x = parentMidPoint - midPoint + unadjustedNextXs[index];
+    const effectiveWidth = getEffectiveWidth(parentNode.children[index]);
+    const padding = (effectiveWidth - child.width) / 2;
+    child.x = parentMidPoint - midPoint + accumWidth + padding;
+    child.title = `x1: ${parentMidPoint - midPoint + accumWidth + padding} width: ${effectiveWidth}`;
+    accumWidth += effectiveWidth;
 
     if (child.children.length) {
       updateChildrenPositions(child);
     }
   });
+}
+
+export function getEffectiveWidth(parentNode: NodeT): number {
+  const childrenLength = parentNode.children.length;
+
+  if (!childrenLength) {
+    return parentNode.width;
+  } else {
+    const childrenEffectiveWidth = parentNode.children.reduce((accumWidth, node, index) => 
+      accumWidth + getEffectiveWidth(node)
+    , 0);
+
+    return childrenEffectiveWidth >= parentNode.width ? childrenEffectiveWidth : parentNode.width;
+  }
 }
 
 function updateSelectedNode(state: typeof INITIAL_CHART_STATE, nextSelectedNodeID: string): NodeT | undefined {
