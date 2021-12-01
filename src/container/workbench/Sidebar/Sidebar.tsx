@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Divider, Fab, Grid } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import ShareIcon from '@mui/icons-material/Share';
@@ -37,6 +37,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   onHeightChange,
   onFontSizeChange,
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current !== null) {
+      // https://stackoverflow.com/questions/222841/most-efficient-way-to-convert-an-htmlcollection-to-an-array
+      Array.prototype.slice.call(ref.current.children)
+        .find(child => child.id === selectedNodeID)
+        .scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedNodeID]);
 
   return (
     <Grid item container direction="column" style={{
@@ -64,9 +74,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <Divider />
 
-      <Grid item container style={{ overflowY: 'scroll', height: '88%', gap: 10 }}>
+      <Grid
+        item
+        container
+        ref={ref}
+        style={{
+          overflowY: 'scroll',
+          height: '88%',
+          gap: 10
+        }}>
         {flattenTree(state).map(node => (
           <NodeCard
+            id={node.id}
             key={node.id}
             title={node.title}
             backgroundColor={node.backgroundColor}
@@ -74,7 +93,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             width={node.width}
             height={node.height}
             fontSize={node.fontSize}
-
             isSelected={node.id === selectedNodeID}
 
             onTitleChange={onTitleChange(node.id)}

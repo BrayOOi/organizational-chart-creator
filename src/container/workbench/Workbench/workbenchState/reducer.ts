@@ -101,7 +101,7 @@ export const chartReducer = (
 
             draft.state.selectedNodeID = parentNode.id;
 
-            updateChildrenPositions(parentNode);
+            updateChildrenPositions(draft.payload);
           }
         }
       });

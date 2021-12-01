@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, CardActions, CardContent, Divider, Fab, Grid, Slider, TextField, Typography } from '@mui/material';
+import { Card, CardActions, CardContent, Divider, Fab, Grid, Slider, TextField, Typography } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -7,6 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { NodeT } from '../../container/workbench/Node/types';
 
 interface NodeCardProps {
+  id: string;
   title: NodeT["title"];
   backgroundColor: NodeT["backgroundColor"];
   fontColor: NodeT["fontColor"];
@@ -29,6 +30,7 @@ interface NodeCardProps {
 }
 
 const NodeCard: React.FC<NodeCardProps> = ({
+  id,
   title,
   backgroundColor,
   fontColor,
@@ -49,12 +51,15 @@ const NodeCard: React.FC<NodeCardProps> = ({
   onDelete,
   onCopy
 }) => (
-  <Card variant="outlined" style={{
-    width: '100%',
-    height: 'fit-content',
-    gap: 10,
-    border: isSelected ? '1px solid black' : undefined,
-  }}>
+  <Card
+    id={id}
+    variant="outlined"
+    style={{
+      width: '100%',
+      height: 'fit-content',
+      gap: 10,
+      border: isSelected ? '1px solid black' : undefined,
+    }}>
     <CardContent>
       <Grid container direction="column" style={{ gap: 20 }}>
         <Grid item>

@@ -34,6 +34,7 @@ const Node: React.FC<NodeProps> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          zIndex: 2,
 
           position: 'absolute',
           top: node.y,
