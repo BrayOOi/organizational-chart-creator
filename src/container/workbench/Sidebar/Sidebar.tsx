@@ -11,9 +11,13 @@ import { flattenTree } from '../Node/utils';
 interface SidebarProps {
   state: NodeT;
   selectedNodeID: string;
+  canUndo: boolean;
+  canRedo: boolean;
   onAddChild: (id: string) => void;
   onCopy: (id: string) => void;
   onDelete: (id: string) => void;
+  onUndo: () => void;
+  onRedo: () => void;
 
   onTitleChange: (id: string) => (title: string) => void;
   onBackgroundColorChange: (id: string) => (color: string) => void;
@@ -26,9 +30,13 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({
   state,
   selectedNodeID,
+  canUndo,
+  canRedo,
   onAddChild,
   onCopy,
   onDelete,
+  onUndo,
+  onRedo,
 
   onTitleChange,
   onBackgroundColorChange,
@@ -58,10 +66,22 @@ const Sidebar: React.FC<SidebarProps> = ({
       padding: 20,
       gap: 20 }}>
       <Grid item container style={{ justifyContent: 'space-between' }}>
-        <Fab color="primary" size="medium" aria-label="undo">
+        <Fab
+          color="primary"
+          size="medium"
+          aria-label="undo"
+          disabled={!canUndo}
+          onClick={onUndo}
+        >
           <KeyboardArrowLeftIcon />
         </Fab>
-        <Fab color="primary" size="medium" aria-label="redo">
+        <Fab
+          color="primary"
+          size="medium"
+          aria-label="redo"
+          disabled={!canRedo}
+          onClick={onRedo}
+        >
           <KeyboardArrowRightIcon />
         </Fab>
         <Fab color="primary" size="medium" aria-label="save">

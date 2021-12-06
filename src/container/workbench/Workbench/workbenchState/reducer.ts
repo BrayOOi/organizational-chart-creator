@@ -39,9 +39,20 @@ const GENESIS_NODE = INITIAL_NODE({
   y: 0
 });
 
-export const INITIAL_CHART_STATE: stateT<{ selectedNodeID: string }, NodeT> = {
+type chartStateType = stateT<
+  { 
+    selectedNodeID: Array<string>;
+    historyStack: Array<NodeT>;
+    selectedSnapshotIndex: number;
+  }, 
+  NodeT
+>;
+
+export const INITIAL_CHART_STATE: chartStateType = {
   state: {
-    selectedNodeID: GENESIS_NODE.id,
+    selectedNodeID: [GENESIS_NODE.id],
+    historyStack: [GENESIS_NODE],
+    selectedSnapshotIndex: 0
   },
   payload: GENESIS_NODE,
   validation: {
@@ -66,10 +77,9 @@ export const chartReducer = (
           })
           targetNode.children.push(newChild);
 
-          draft.state.selectedNodeID = newChild.id;
-
           updateChildrenPositions(draft.payload);
-        }
+          updateHistory(draft, newChild.id);
+        };
       });
     case 'click/add_sibling':
       return produce(state, draft => {
@@ -84,9 +94,8 @@ export const chartReducer = (
 
           parentNode.children.push(newChild);
 
-          draft.state.selectedNodeID = newChild.id;
-          
           updateChildrenPositions(draft.payload);
+          updateHistory(draft, newChild.id);
         }
       });
     case 'click/delete_node':
@@ -99,25 +108,39 @@ export const chartReducer = (
           if (targetNodeIndex >= 0) {
             parentNode.children.splice(targetNodeIndex, 1);
 
-            draft.state.selectedNodeID = parentNode.id;
-
             updateChildrenPositions(draft.payload);
+            updateHistory(draft, parentNode.id);
           }
+        }
+      });
+    case 'click/undo':
+      return produce(state, draft => {
+        if (draft.state.selectedSnapshotIndex - 1 >= 0) {
+          draft.payload = draft.state.historyStack[draft.state.selectedSnapshotIndex - 1];
+          draft.state.selectedSnapshotIndex--;
+        }
+      });
+    case 'click/redo':
+      return produce(state, draft => {
+        if (draft.state.selectedSnapshotIndex < draft.state.historyStack.length - 1) {
+          draft.payload = draft.state.historyStack[draft.state.selectedSnapshotIndex + 1];
+          draft.state.selectedSnapshotIndex++;
         }
       });
 
     // node operations
     case 'click/select_node':
       return produce(state, draft => {
-        draft.state.selectedNodeID = action.payload.id;
+        updateHistory(draft, action.payload.id);
       });
     case 'pick/change_width':
       return produce(state, draft => {
-        let targetNode = updateSelectedNode(draft, action.payload.id);
+        let targetNode = findNode(draft.payload, action.payload.id);
 
         assignPayload(KEY_MAP[action.type], action.payload.payload, targetNode);
 
         updateChildrenPositions(draft.payload);
+        updateHistory(draft, action.payload.id);
       });
     case 'type/change_title':
     case 'pick/change_background_color':
@@ -125,9 +148,10 @@ export const chartReducer = (
     case 'pick/change_height':
     case 'pick/change_font_size':
       return produce(state, draft => {
-        let targetNode = updateSelectedNode(draft, action.payload.id);
+        let targetNode = findNode(draft.payload, action.payload.id);
 
         assignPayload(KEY_MAP[action.type], action.payload.payload, targetNode);
+        updateHistory(draft, action.payload.id);
       });
     default:
       return state;
@@ -177,15 +201,13 @@ export function getEffectiveWidth(parentNode: NodeT): number {
   }
 }
 
-function updateSelectedNode(state: typeof INITIAL_CHART_STATE, nextSelectedNodeID: string): NodeT | undefined {
-  const targetNode = findNode(state.payload, nextSelectedNodeID);
-
-  if (state.state.selectedNodeID !== nextSelectedNodeID) {
-
-    if (targetNode) {
-      state.state.selectedNodeID = nextSelectedNodeID;
-    }
+function updateHistory(draft: chartStateType, nextSelectedId: string) {
+  if (draft.state.selectedSnapshotIndex < draft.state.historyStack.length - 1) {
+    draft.state.historyStack = draft.state.historyStack.slice(0, draft.state.selectedSnapshotIndex + 1);
+    draft.state.selectedNodeID = draft.state.selectedNodeID.slice(0, draft.state.selectedSnapshotIndex + 1);
   }
 
-  return targetNode;
-}
+  draft.state.historyStack.push(draft.payload);
+  draft.state.selectedNodeID.push(nextSelectedId);
+  draft.state.selectedSnapshotIndex++;
+};

@@ -16,6 +16,14 @@ const deleteNode = (id: string) => ({
   payload: id
 });
 
+const undoChart = () => ({
+  type: 'click/undo' as const
+});
+
+const redoChart = () => ({
+  type: 'click/redo' as const
+});
+
 // node operations
 const selectNode = (node: NodeT) => ({
   type: 'click/select_node' as const,
@@ -74,6 +82,8 @@ const chartActions = {
   addNode,
   addSibling,
   deleteNode,
+  undoChart,
+  redoChart,
 
   selectNode,
   changeTitle,

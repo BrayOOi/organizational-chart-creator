@@ -1,5 +1,4 @@
 import React, { useReducer } from 'react';
-import { Grid } from '@mui/material';
 
 import Node from '../Node';
 import Sidebar from '../Sidebar';
@@ -10,6 +9,8 @@ import localDispatchDecorator from '../../../utils/localDispatchDecorator';
 
 const Workbench: React.FC<{}> = () => {
   const [chartState, localDispatch] = useReducer(chartReducer, INITIAL_CHART_STATE);
+  const snapshotIndex = chartState.state.selectedSnapshotIndex;
+  const canRedo = chartState.state.historyStack.length - 1 !== snapshotIndex;
 
   const localDispatchAction = localDispatchDecorator(localDispatch);
 
@@ -22,9 +23,9 @@ const Workbench: React.FC<{}> = () => {
           transform: 'translate(50%, 50%)',
         }}>
         <Node
-          node={chartState.payload}
+          node={chartState.state.historyStack[snapshotIndex]}
           onClick={localDispatchAction(chartActions.selectNode)}
-          selectedNodeID={chartState.state.selectedNodeID}
+          selectedNodeID={chartState.state.selectedNodeID[snapshotIndex]}
         />
       </div>
       <div
@@ -36,11 +37,15 @@ const Workbench: React.FC<{}> = () => {
         }}
       >
       <Sidebar
-        state={chartState.payload}
-        selectedNodeID={chartState.state.selectedNodeID}
+        state={chartState.state.historyStack[snapshotIndex]}
+        selectedNodeID={chartState.state.selectedNodeID[snapshotIndex]}
+        canUndo={!!snapshotIndex}
+        canRedo={canRedo}
         onAddChild={localDispatchAction(chartActions.addNode)}
         onCopy={localDispatchAction(chartActions.addSibling)}
         onDelete={localDispatchAction(chartActions.deleteNode)}
+        onUndo={localDispatchAction(chartActions.undoChart)}
+        onRedo={localDispatchAction(chartActions.redoChart)}
 
         onTitleChange={id => payload => localDispatch(chartActions.changeTitle(id, payload))}
         onBackgroundColorChange={id => payload => localDispatch(chartActions.pickBackgroundColor(id, payload))}
