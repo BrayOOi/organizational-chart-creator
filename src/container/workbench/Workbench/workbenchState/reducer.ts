@@ -150,11 +150,12 @@ function updateChildrenPositions(parentNode: NodeT) {
   let accumWidth = 0;
 
   parentNode.children.forEach((child, index) => {
-    const effectiveWidth = getEffectiveWidth(parentNode.children[index]);
+    const effectiveWidth = getEffectiveWidth(child);
+    // this space will ensure child to stay at the center if child.children.length
     const padding = (effectiveWidth - child.width) / 2;
-    child.x = parentMidPoint - midPoint + accumWidth + padding;
-    child.title = `x1: ${parentMidPoint - midPoint + accumWidth + padding} width: ${effectiveWidth}`;
-    accumWidth += effectiveWidth;
+    child.x = parentMidPoint - midPoint + accumWidth + padding + (index ? PADDING: 0);
+    child.title = `x1: ${parentMidPoint - midPoint + accumWidth + padding + (index ? PADDING: 0)} width: ${effectiveWidth}`;
+    accumWidth += effectiveWidth + (index ? PADDING: 0);
 
     if (child.children.length) {
       updateChildrenPositions(child);
@@ -169,7 +170,7 @@ export function getEffectiveWidth(parentNode: NodeT): number {
     return parentNode.width;
   } else {
     const childrenEffectiveWidth = parentNode.children.reduce((accumWidth, node, index) => 
-      accumWidth + getEffectiveWidth(node)
+      accumWidth + getEffectiveWidth(node) + (index ? PADDING: 0)
     , 0);
 
     return childrenEffectiveWidth >= parentNode.width ? childrenEffectiveWidth : parentNode.width;
