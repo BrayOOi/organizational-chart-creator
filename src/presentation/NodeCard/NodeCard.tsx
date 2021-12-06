@@ -25,7 +25,9 @@ interface NodeCardProps {
   onFontSizeChange: (size: number) => void;
 
   onAddChild: () => void;
+  disableDelete: boolean;
   onDelete: () => void;
+  disableCopy: boolean;
   onCopy: () => void;
 }
 
@@ -48,7 +50,9 @@ const NodeCard: React.FC<NodeCardProps> = ({
   onFontSizeChange,
 
   onAddChild,
+  disableDelete,
   onDelete,
+  disableCopy,
   onCopy
 }) => (
   <Card
@@ -151,10 +155,10 @@ const NodeCard: React.FC<NodeCardProps> = ({
         <Fab color="primary" size="small" aria-label="add" onClick={onAddChild}>
           <AddIcon fontSize="small" />
         </Fab>
-        <Fab color="primary" size="small" aria-label="copy" onClick={onCopy}>
+        <Fab color="primary" size="small" aria-label="copy" onClick={onCopy} disabled={disableCopy}>
           <ContentCopyIcon fontSize="small" />
         </Fab>
-        <Fab color="primary" size="small" aria-label="delete" onClick={onDelete}>
+        <Fab color="primary" size="small" aria-label="delete" onClick={onDelete} disabled={disableDelete}>
           <DeleteIcon fontSize="small" />
         </Fab>
       </Grid>

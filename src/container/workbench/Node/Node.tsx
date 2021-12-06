@@ -56,6 +56,7 @@ const Node: React.FC<NodeProps> = ({
           }}>
           {node.children.map(child => (
             <line
+              key={`${child.id}-path`}
               x1={effectiveWidth / 2}
               y1={node.height}
               x2={effectiveWidth / 2 + (child.x - node.x)}

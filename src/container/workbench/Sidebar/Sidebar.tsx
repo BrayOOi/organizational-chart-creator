@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           height: '88%',
           gap: 10
         }}>
-        {flattenTree(state).map(node => (
+        {flattenTree(state).map((node, index) => (
           <NodeCard
             id={node.id}
             key={node.id}
@@ -103,7 +103,9 @@ const Sidebar: React.FC<SidebarProps> = ({
             onFontSizeChange={onFontSizeChange(node.id)}
 
             onAddChild={() => onAddChild(node.id)}
+            disableCopy={!index}
             onCopy={() => onCopy(node.id)}
+            disableDelete={!index}
             onDelete={() => onDelete(node.id)}
           />))}
       </Grid>
