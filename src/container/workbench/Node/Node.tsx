@@ -59,7 +59,7 @@ const Node: React.FC<NodeProps> = ({
               key={`${child.id}-path`}
               x1={effectiveWidth / 2}
               y1={node.height}
-              x2={effectiveWidth / 2 + (child.x - node.x)}
+              x2={effectiveWidth / 2 + (child.x + child.width/2 - node.x - node.width/2)}
               y2={node.height + 100}
               style={{
                 stroke: 'black',
