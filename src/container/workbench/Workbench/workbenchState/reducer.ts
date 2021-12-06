@@ -176,7 +176,7 @@ function updateChildrenPositions(parentNode: NodeT) {
   parentNode.children.forEach((child, index) => {
     const effectiveWidth = getEffectiveWidth(child);
     // this space will ensure child to stay at the center if child.children.length
-    const padding = (effectiveWidth - child.width) / 2;
+    const padding = Math.max((effectiveWidth - child.width) / 2, (parentNode.width - effectiveWidth) / 2);
     child.x = parentMidPoint - midPoint + accumWidth + padding + (index ? PADDING: 0);
     child.title = `x1: ${parentMidPoint - midPoint + accumWidth + padding + (index ? PADDING: 0)} width: ${effectiveWidth}`;
     accumWidth += effectiveWidth + (index ? PADDING: 0);
